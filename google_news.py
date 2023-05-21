@@ -20,8 +20,7 @@ with requests.Session() as c:
         url_tag = tag.find_next('a')
         url = url_tag['href']
         if '/url?q=' in url and not ('google' in url):
-            modified_url = url.split('/url?q=')[1]
-            modified_url = modified_url.split('&amp;sa=U&amp;ved=')[0]
+            modified_url = url.split('/url?q=')[1].split('&amp;sa=U&amp;ved=')[0]
             
             data[headline] = modified_url
 
