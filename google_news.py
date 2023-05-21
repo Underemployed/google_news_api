@@ -7,22 +7,25 @@ link = "https://www.google.com/search?q=indian+stock&client=firefox-b-d&tbas=0&t
 req = Request(link, headers={'User-Agent': 'Mozilla/5.0'})
 webpage = urlopen(req).read()
 
-
-
 headline_pattern = re.compile(r'<h3[^>]*>(.*?)<\/h3>', re.IGNORECASE)
 
+data = {}
 
 with requests.Session() as c:
     soup = BeautifulSoup(webpage, 'lxml')
-    headlines = soup.find_all(lambda tag: tag.name == 'h3' and headline_pattern.match(str(tag)))
-    for headline in headlines:
-        print(headline.text)
+    headline_tags = soup.find_all(lambda tag: tag.name == 'h3' and headline_pattern.match(str(tag)))
+    for tag in headline_tags:
+        headline = tag.text
         
-url_pattern = re.compile(r'href=["\'](.*?)["\']', re.IGNORECASE)
-urls = re.findall(url_pattern, str(webpage))
-for url in urls:
-    if '/url?q=' in url and not('google' in url):
-        modified_url = url.split('/url?q=')[1]
-        modified_url=modified_url.split('&amp;sa=U&amp;ved=')[0]
-        print(modified_url)
-    
+        url_tag = tag.find_next('a')
+        url = url_tag['href']
+        if '/url?q=' in url and not ('google' in url):
+            modified_url = url.split('/url?q=')[1]
+            modified_url = modified_url.split('&amp;sa=U&amp;ved=')[0]
+            
+            data[headline] = modified_url
+
+for headline, url in data.items():
+    print(f"Headline: {headline}")
+    print(f"URL: {url}")
+    print()
