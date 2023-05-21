@@ -8,7 +8,7 @@ req = Request(link, headers={'User-Agent': 'Mozilla/5.0'})
 webpage = urlopen(req).read()
 
 
-'''
+
 headline_pattern = re.compile(r'<h3[^>]*>(.*?)<\/h3>', re.IGNORECASE)
 
 
@@ -17,4 +17,12 @@ with requests.Session() as c:
     headlines = soup.find_all(lambda tag: tag.name == 'h3' and headline_pattern.match(str(tag)))
     for headline in headlines:
         print(headline.text)
-'''
+        
+url_pattern = re.compile(r'href=["\'](.*?)["\']', re.IGNORECASE)
+urls = re.findall(url_pattern, str(webpage))
+for url in urls:
+    if '/url?q=' in url and not('google' in url):
+        modified_url = url.split('/url?q=')[1]
+        modified_url=modified_url.split('&amp;sa=U&amp;ved=')[0]
+        print(modified_url)
+    
