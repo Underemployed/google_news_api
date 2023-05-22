@@ -1,30 +1,34 @@
 from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup
 import requests
-import re
+import newspaper
+import time
+    
+# headline_pattern = re.compile(r'<h3[^>]*>(.*?)<\/h3>', re.IGNORECASE) couldnt get full heading
 
-link = "https://www.google.com/search?q=indian+stock&client=firefox-b-d&tbas=0&tbs=sbd:1,qdr:d&tbm=nws&sxsrf=APwXEdda0VaUcKYj_npOoApwunxhZNK77g:1684653847046&source=lnt&sa=X&ved=2ahUKEwjHjv3Q8IX_AhUtUWwGHaRCDQAQpwV6BAgCEBY&biw=1600&bih=814&dpr=1"
+link = "https://www.google.co.in/search?q=indian+stock&num=100&gl=IN&tbs=sbd:1,qdr:d&tbm=nws&source=lnt&num=100&gl=IN"
 req = Request(link, headers={'User-Agent': 'Mozilla/5.0'})
 webpage = urlopen(req).read()
-
-headline_pattern = re.compile(r'<h3[^>]*>(.*?)<\/h3>', re.IGNORECASE)
-
-data = {}
-
 with requests.Session() as c:
     soup = BeautifulSoup(webpage, 'lxml')
-    headline_tags = soup.find_all(lambda tag: tag.name == 'h3' and headline_pattern.match(str(tag)))
-    for tag in headline_tags:
-        headline = tag.text
-        
-        url_tag = tag.find_next('a')
-        url = url_tag['href']
-        if '/url?q=' in url and not ('google' in url):
-            modified_url = url.split('/url?q=')[1].split('&amp;sa=U&amp;ved=')[0]
-            
-            data[headline] = modified_url
-
-for headline, url in data.items():
-    print(f"Headline: {headline}")
-    print(f"URL: {url}")
-    print()
+    url_tags = soup.find_all('a')
+    for tag in url_tags:
+        url = tag['href']
+        if '/url?q=' in url and not ('google' in url) and not ('equitymaster' in url) and not ('youtube' in url):
+            modified_url = url.split('/url?q=')[1].split('&sa=')[0]
+            # Extract title and summary using newspaper3k
+            article = newspaper.Article(modified_url) 
+            article.download()
+            time.sleep(5)
+            try:
+                article.parse()
+                article.nlp()
+                title = article.title
+                summary = article.summary
+                print("<="+"="*100+"=>")
+                print(f"URL: {modified_url}")
+                print(f"Title: {title}")
+                print(f"Summary: {summary}")
+                print()
+            except Exception as e:
+                continue
