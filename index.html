@@ -65,7 +65,7 @@
                 const searchInput = document.getElementById("search-input").value;
                 loadingMessage.innerHTML = "Fetching articles. Please wait...";
 
-                fetch(`http://127.0.0.1:5000/api/articles?query=${searchInput}`)
+                fetch(`http://100.20.92.101:5000/api/articles?query=${searchInput}`)
                     .then(response => response.json())
                     .then(data => {
                         cachedArticles = data.articles; // Update cached articles

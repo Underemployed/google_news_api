@@ -10,7 +10,9 @@ document.addEventListener("DOMContentLoaded", function () {
         loadingMessage.innerHTML = "Fetching articles. Please wait...";
         articlesContainer.innerHTML = ""; // Clear previous articles
 
-        fetch(`http://127.0.0.1:5000/api/articles?query=${searchInput}`)
+        fetch(`100.20.92.101
+        44.225.181.72
+        44.227.217.144/api/articles?query=${searchInput}`)
             .then(response => response.json())
             .then(data => {
                 displayArticles(data.articles);
