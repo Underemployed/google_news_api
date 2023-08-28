@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article Fetcher</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Add custom CSS for vertical article list */
+        .article-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .article-list-item {
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Article Fetcher</h1>
+    </header>
+    <main>
+        <div class="container mt-4">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <!-- Wrap the input and button in a form element -->
+                    <form id="search-form">
+                        <div class="input-group">
+                            <input type="text" id="search-input" class="form-control" placeholder="Enter your search...">
+                            <div class="input-group-append">
+                                <!-- Change the button type to "submit" -->
+                                <button id="fetch-articles" class="btn btn-primary" type="submit">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div id="loading-message" class="text-center mt-3">
+                <!-- Loading message will be displayed here -->
+            </div>
+            <!-- Use an unordered list for the vertical article list -->
+            <ul id="articles-container" class="article-list mt-3">
+                <!-- Articles will be displayed here -->
+            </ul>
+        </div>
+    </main>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const searchForm = document.getElementById("search-form");
+            const articlesContainer = document.getElementById("articles-container");
+            const loadingMessage = document.getElementById("loading-message");
+            let cachedArticles = getStoredArticles(); // Load cached articles from local storage
+
+            searchForm.addEventListener("submit", function (event) {
+                event.preventDefault(); // Prevent form submission
+
+                const searchInput = document.getElementById("search-input").value;
+                loadingMessage.innerHTML = "Fetching articles. Please wait...";
+
+                fetch(`http://127.0.0.1:5000/api/articles?query=${searchInput}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        cachedArticles = data.articles; // Update cached articles
+                        storeArticlesInLocalStorage(cachedArticles); // Store in local storage
+                        displayArticles(cachedArticles);
+                        loadingMessage.innerHTML = ""; // Clear loading message
+                    })
+                    .catch(error => {
+                        console.error("Error fetching articles:", error);
+                        loadingMessage.innerHTML = "Error fetching articles. Please try again later.";
+                    });
+            });
+
+            function displayArticles(articles) {
+                const articlesList = document.createElement("ul");
+                articlesList.className = "article-list";
+                articlesContainer.innerHTML = ""; // Clear previous articles
+
+                if (articles.length === 0) {
+                    articlesList.innerHTML = "<li>No articles found.</li>";
+                } else {
+                    articles.forEach(article => {
+                        const articleItem = document.createElement("li");
+                        articleItem.className = "article-list-item";
+                        articleItem.innerHTML = `
+                            <div>
+                                <h5>${article.title}</h5>
+                                <p><strong>Publish Time:</strong> ${article.publish_time}</p>
+                                <p>${article.summary}</p>
+                                <a href="${article.source}" target="_blank">Read More</a>
+                            </div>
+                        `;
+                        articlesList.appendChild(articleItem);
+                    });
+                }
+
+                articlesContainer.appendChild(articlesList);
+            }
+
+            // Initial display with cached articles (if any)
+            displayArticles(cachedArticles);
+
+            // Function to store articles in local storage
+            function storeArticlesInLocalStorage(articles) {
+                localStorage.setItem("cachedArticles", JSON.stringify(articles));
+            }
+
+            // Function to get cached articles from local storage
+            function getStoredArticles() {
+                const storedArticles = localStorage.getItem("cachedArticles");
+                return storedArticles ? JSON.parse(storedArticles) : [];
+            }
+        });
+    </script>
+</body>
+</html>

@@ -2,7 +2,6 @@ from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup
 import requests
 import newspaper
-import time
 import csv
     
 link = "https://www.google.co.in/search?q=indian+stock&num=100&gl=IN&tbs=sbd:1,qdr:d&tbm=nws&source=lnt&num=100&gl=IN"
