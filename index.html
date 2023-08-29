@@ -3,10 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Article Fetcher</title>
+    <title>Google News Scrapper</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="styles.css">
     <style>
+        /* Add custom CSS for dark theme */
+        body {
+            background-color: #1f1f1f; /* Dark background color */
+            color: #fff; /* Light text color */
+        }
+        main{
+            background-color: #1f1f1f; /* Dark background color */
+            color: #fff; /* Light text color */
+        }
+        header {
+            background-color: #333; /* Dark header background color */
+            padding: 20px;
+        }
+
+        h1 {
+            color: #fff; /* Light header text color */
+        }
+
+        .container {
+            background-color: #333; /* Dark container background color */
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        .form-control {
+            background-color: #444; /* Dark input background color */
+            border: 1px solid #666; /* Dark input border color */
+            color: #fff; /* Light input text color */
+        }
+
+        .btn-primary {
+            background-color: #007bff; /* Primary button color */
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3; /* Button color on hover */
+        }
+
         /* Add custom CSS for vertical article list */
         .article-list {
             list-style: none;
@@ -15,8 +54,23 @@
 
         .article-list-item {
             margin-bottom: 20px;
-            border: 1px solid #ddd;
+            border: 1px solid #444; /* Dark border color for article items */
             padding: 10px;
+            background-color: #222; /* Dark background color for article items */
+        }
+
+        /* Style links */
+        a {
+            color: #007bff; /* Link color */
+        }
+
+        a:hover {
+            text-decoration: underline; /* Underline link on hover */
+        }
+
+        /* Loading message styles */
+        #loading-message {
+            color: #007bff; /* Loading message color */
         }
     </style>
 </head>
@@ -53,7 +107,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+                document.addEventListener("DOMContentLoaded", function () {
             const searchForm = document.getElementById("search-form");
             const articlesContainer = document.getElementById("articles-container");
             const loadingMessage = document.getElementById("loading-message");
@@ -80,30 +134,30 @@
             });
 
             function displayArticles(articles) {
-                const articlesList = document.createElement("ul");
-                articlesList.className = "article-list";
-                articlesContainer.innerHTML = ""; // Clear previous articles
+    const articlesList = document.createElement("ul");
+    articlesList.className = "article-list";
+    articlesContainer.innerHTML = ""; // Clear previous articles
 
-                if (articles.length === 0) {
-                    articlesList.innerHTML = "<li>No articles found.</li>";
-                } else {
-                    articles.forEach(article => {
-                        const articleItem = document.createElement("li");
-                        articleItem.className = "article-list-item";
-                        articleItem.innerHTML = `
-                            <div>
-                                <h5>${article.title}</h5>
-                                <p><strong>Publish Time:</strong> ${article.publish_time}</p>
-                                <p>${article.summary}</p>
-                                <a href="${article.source}" target="_blank">Read More</a>
-                            </div>
-                        `;
-                        articlesList.appendChild(articleItem);
-                    });
-                }
+    if (articles.length === 0) {
+        articlesList.innerHTML = "<li>No articles found.</li>";
+    } else {
+        articles.forEach(article => {
+            const articleItem = document.createElement("li");
+            articleItem.className = "article-list-item";
+            articleItem.innerHTML = `
+                <div>
+                    <h5>${article.title}</h5>
+                    ${article.publish_time ? `<p><strong>Publish Time:</strong> ${article.publish_time}</p>` : ''}
+                    <p>${article.summary}</p>
+                    <a href="${article.source}" target="_blank">Read More</a>
+                </div>
+            `;
+            articlesList.appendChild(articleItem);
+        });
+    }
 
-                articlesContainer.appendChild(articlesList);
-            }
+    articlesContainer.appendChild(articlesList);
+}
 
             // Initial display with cached articles (if any)
             displayArticles(cachedArticles);
@@ -119,7 +173,6 @@
                 return storedArticles ? JSON.parse(storedArticles) : [];
             }
         });
-        
     </script>
 </body>
 </html>

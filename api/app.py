@@ -1,11 +1,10 @@
 import asyncio
-import tldextract  
+import tldextract
 from flask import Flask, jsonify, request
 from urllib.request import Request, urlopen
 from urllib.parse import quote
 from bs4 import BeautifulSoup
 import newspaper
-import json
 from flask_cors import CORS
 import nltk
 from concurrent.futures import ThreadPoolExecutor
@@ -21,7 +20,7 @@ class ArticleScraper:
         self.max_retries = max_retries
         self.query_encoded = quote(query)
         self.articles_data = []
-        self.blacklist = set()  # Initialize an empty blacklist
+        self.blacklist = set()
 
     def download_article_with_retry(self, url):
         retries = 0
@@ -36,8 +35,7 @@ class ArticleScraper:
                 print(f"Error downloading article from {url}: {str(e)}")
                 retries += 1
                 continue
-        # If all retries fail, add the domain to the blacklist and return None
-        domain = url
+        domain = tldextract.extract(url).domain  # Extract the domain from the URL
         print(f"Adding {domain} to the blacklist due to repeated failures.")
         self.add_to_blacklist(domain)
         return None
@@ -65,10 +63,9 @@ class ArticleScraper:
                 yield modified_url
 
     def parse_url(self, url):
-        # Check if the domain contains "google" (case-insensitive) and add it to the blacklist
         if 'google' in url.lower():
             print(f"Skipping blacklisted domain: {url}")
-            domain = tldextract.extract(url).domain  # Extract the domain using tldextract
+            domain = tldextract.extract(url).domain  # Extract the domain from the URL
             self.add_to_blacklist(domain.lower())
             return None
 
@@ -96,24 +93,19 @@ class ArticleScraper:
         print(title)
         return data
 
-
-    # Method to add a domain to the blacklist
-    # Modify the add_to_blacklist method
-    def add_to_blacklist(self, url):
-        domain = tldextract.extract(url).domain  # Extract the domain using tldextract
-        self.blacklist.add(domain.lower())
+    def add_to_blacklist(self, domain):
         print(f"Adding {domain} to the blacklist")
-
+        self.blacklist.add(domain)
 
 @app.route('/api/articles', methods=['GET'])
 async def scrape_articles():
-    query = request.args.get('query', 'indian stock')  # Default to "indian stock" if query parameter is not provided
+    query = request.args.get('query', 'indian stock')
     scraper = ArticleScraper(query)
     await scraper.fetch_articles()
     print("Completed")
 
     # Print blacklisted websites
-    print("Blacklisted Websites:", ', '.join(scraper.blacklist))
+    print("Blacklisted Websites:", '\n'.join(scraper.blacklist))
 
     return jsonify({"articles": scraper.articles_data})
 
