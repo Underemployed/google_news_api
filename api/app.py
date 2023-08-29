@@ -12,8 +12,7 @@ from concurrent.futures import ThreadPoolExecutor
 nltk.download('punkt')
 
 app = Flask(__name__)
-CORS(app)
-
+CORS(app, resources={r"/api/*": {"origins": "https://underemployed.github.io"}})  # Allow GitHub as an origin
 class ArticleScraper:
     def __init__(self, query, max_retries=3):
         self.query = query
