@@ -3,3 +3,4 @@ newspaper3k
 beautifulsoup4
 Flask
 gunicorn
+flask_cors

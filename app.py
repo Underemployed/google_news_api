@@ -6,8 +6,10 @@ import newspaper
 import json
 import os
 from flask import Flask, jsonify,request
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 class ArticleScraper:
     def __init__(self, query, max_retries=3, blacklist_file="blacklist.txt", data_file="articles.json"):
         self.query = query
