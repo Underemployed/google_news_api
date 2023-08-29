@@ -1,4 +1,3 @@
-import asyncio
 import tldextract
 from flask import Flask, jsonify, request
 from urllib.request import Request, urlopen
@@ -8,6 +7,8 @@ import newspaper
 from flask_cors import CORS
 import nltk
 from concurrent.futures import ThreadPoolExecutor
+import feedparser
+
 
 nltk.download('punkt')
 
@@ -40,17 +41,25 @@ class ArticleScraper:
         return None
 
     async def fetch_articles(self):
-        link = f"https://www.google.co.in/search?q={self.query_encoded}&num=1&gl=IN&tbs=sbd:1,qdr:d&tbm=nws&source=lnt&num=100&gl=IN"
-        print(link)
-        req = Request(link, headers={'User-Agent': 'Mozilla/5.0'})
-        webpage = urlopen(req).read()
+        query_encoded = quote(self.query)
+        feed_url = f"https://news.google.co.in/rss/search?q={query_encoded}&sort=date&num=100"
+        feed = feedparser.parse(feed_url)
+        for entry in feed.entries:
+            title = entry.title
+            link = entry.link
+            summary = entry.summary
+            publish_time = entry.published
 
-        with ThreadPoolExecutor(max_workers=5) as executor:
-            loop = asyncio.get_event_loop()
-            futures = [loop.run_in_executor(executor, self.parse_url, url) for url in self.get_urls(webpage)]
-            for response in await asyncio.gather(*futures):
-                if response:
-                    self.articles_data.append(response)
+            data = {
+            "title": title,
+            "publish_time": publish_time,
+            "summary": summary,
+            "source": link
+            }
+
+            print(title)
+            self.articles_data.append(data)
+
 
     def get_urls(self, webpage):
         soup = BeautifulSoup(webpage, 'lxml')
