@@ -53,6 +53,7 @@
         }
 
         .article-list-item {
+            border-radius: 20px;
             margin-bottom: 20px;
             border: 1px solid #444; /* Dark border color for article items */
             padding: 10px;
@@ -118,8 +119,8 @@
 
                 const searchInput = document.getElementById("search-input").value;
                 loadingMessage.innerHTML = "Fetching articles. Please wait...";
-                fetch(`http://127.0.0.1:5000/api/articles?query=${searchInput}`)
-                // fetch(`https://google-scrapper-underemlpoyed.onrender.com/api/articles?query=${searchInput}`)
+                // fetch(`http://127.0.0.1:5000/api/articles?query=${searchInput}`)
+                fetch(`https://google-scrapper-underemlpoyed.onrender.com/api/articles?query=${searchInput}`)
                 // fetch(`https://google-scrapper-underemlpoyed.onrender.com/api/articles?query=${searchInput}`)
                     .then(response => response.json())
                     .then(data => {
