@@ -6,8 +6,11 @@ import newspaper
 import json
 import os
 from flask import Flask, jsonify,request
-
+from flask_cors import CORS
+import nltk
+nltk.download('punkt')
 app = Flask(__name__)
+CORS(app)
 class ArticleScraper:
     def __init__(self, query, max_retries=3, blacklist_file="blacklist.txt", data_file="articles.json"):
         self.query = query
@@ -66,13 +69,15 @@ class ArticleScraper:
                         continue
 
                     title = article.title
+                    if 'you a robot?' in title.lower():
+                        continue
                     summary = article.summary
                     source = modified_url
                     publish_time = article.publish_date.strftime("%Y-%m-%d %H:%M:%S") if article.publish_date else ""
 
                     if len(summary.split()) < 30:
                         continue
-
+                    
                     data = {
                         "title": title,
                         "publish_time": publish_time,
