@@ -148,9 +148,9 @@
             articleItem.className = "article-list-item";
             articleItem.innerHTML = `
                 <div>
-                    <h5>${article.title}</h5>
+                    <h5>${article.summary}</h5>
                     ${article.publish_time ? `<p><strong>Publish Time:</strong> ${article.publish_time}</p>` : ''}
-                    <p>${article.summary}</p>
+                    <p></p>
                     <a href="${article.source}" target="_blank">Read More</a>
                 </div>
             `;
