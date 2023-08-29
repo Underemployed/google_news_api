@@ -6,3 +6,4 @@ gunicorn
 flask_cors
 nltk
 feedparser
+aiohttp
