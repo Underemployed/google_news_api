@@ -25,7 +25,7 @@ class ArticleScraper:
     async def download_article_with_retry(self, session, url):
         try:
             async with session.get(url) as response:
-                if response.status == 200:
+                if response.status == 100:
                     content = await response.read()
                     article = newspaper.Article(url, config=config)
                     article.set_html(content)
