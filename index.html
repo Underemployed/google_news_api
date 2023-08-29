@@ -53,7 +53,7 @@
         }
 
         .article-list-item {
-            border-radius: 20px;
+            border-radius: 2px;
             margin-bottom: 20px;
             border: 1px solid #444; /* Dark border color for article items */
             padding: 10px;
@@ -83,12 +83,10 @@
         <div class="container mt-4">
             <div class="row justify-content-center">
                 <div class="col-md-6">
-                    <!-- Wrap the input and button in a form element -->
                     <form id="search-form">
                         <div class="input-group">
                             <input type="text" id="search-input" class="form-control" placeholder="Enter your search...">
                             <div class="input-group-append">
-                                <!-- Change the button type to "submit" -->
                                 <button id="fetch-articles" class="btn btn-primary" type="submit">Search</button>
                             </div>
                         </div>
@@ -103,6 +101,7 @@
                 <!-- Articles will be displayed here -->
             </ul>
         </div>
+        
     </main>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
